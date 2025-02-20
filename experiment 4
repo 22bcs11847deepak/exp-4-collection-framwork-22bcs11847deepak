@@ -1,0 +1,178 @@
+card collection:
+import java.util.*;
+
+public class CardCollection {
+    public static void main(String[] args) {
+        Map<String, List<String>> cardMap = new HashMap<>();
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n1. Add Card\n2. Find Cards by Symbol\n3. Display All Cards\n4. Exit");
+            int choice = sc.nextInt();
+            sc.nextLine();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Card Symbol: ");
+                    String symbol = sc.nextLine();
+                    System.out.print("Enter Card Name: ");
+                    String cardName = sc.nextLine();
+
+                    cardMap.putIfAbsent(symbol, new ArrayList<>());
+                    cardMap.get(symbol).add(cardName);
+                    break;
+                case 2:
+                    System.out.print("Enter Symbol to Search: ");
+                    String searchSymbol = sc.nextLine();
+                    System.out.println("Cards: " + cardMap.getOrDefault(searchSymbol, Collections.emptyList()));
+                    break;
+                case 3:
+                    for (Map.Entry<String, List<String>> entry : cardMap.entrySet()) {
+                        System.out.println(entry.getKey() + ": " + entry.getValue());
+                    }
+                    break;
+                case 4:
+                    sc.close();
+                    return;
+            }
+        }
+    }
+}
+
+
+
+
+ticket booking:
+import java.util.*;
+
+class TicketBookingSystem {
+    private final Set<Integer> bookedSeats = new HashSet<>();
+
+    public synchronized boolean bookTicket(int seatNumber, String passenger) {
+        if (bookedSeats.contains(seatNumber)) {
+            System.out.println(passenger + " -> Seat " + seatNumber + " is already booked.");
+            return false;
+        } else {
+            bookedSeats.add(seatNumber);
+            System.out.println(passenger + " booked Seat " + seatNumber);
+            return true;
+        }
+    }
+}
+
+class PassengerThread extends Thread {
+    private final TicketBookingSystem system;
+    private final int seatNumber;
+    private final String passengerName;
+
+    PassengerThread(TicketBookingSystem system, int seatNumber, String passengerName, int priority) {
+        this.system = system;
+        this.seatNumber = seatNumber;
+        this.passengerName = passengerName;
+        this.setPriority(priority); // Set thread priority
+    }
+
+    public void run() {
+        system.bookTicket(seatNumber, passengerName);
+    }
+}
+
+public class TicketBooking {
+    public static void main(String[] args) {
+        TicketBookingSystem system = new TicketBookingSystem();
+
+        PassengerThread p1 = new PassengerThread(system, 1, "Alice", Thread.MIN_PRIORITY);
+        PassengerThread p2 = new PassengerThread(system, 1, "Bob", Thread.MAX_PRIORITY);
+        PassengerThread p3 = new PassengerThread(system, 2, "Charlie", Thread.NORM_PRIORITY);
+        PassengerThread p4 = new PassengerThread(system, 2, "David", Thread.MIN_PRIORITY);
+        
+        p1.start();
+        p2.start();
+        p3.start();
+        p4.start();
+    }
+}
+
+
+
+
+employee management:
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Employee {
+    int id;
+    String name;
+    double salary;
+
+    Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public String toString() {
+        return "ID: " + id + ", Name: " + name + ", Salary: " + salary;
+    }
+}
+
+public class EmployeeManagement {
+    public static void main(String[] args) {
+        ArrayList<Employee> employees = new ArrayList<>();
+        Scanner sc = new Scanner(System.in);
+        
+        while (true) {
+            System.out.println("\n1. Add Employee\n2. Update Employee\n3. Remove Employee\n4. Search Employee\n5. Display All\n6. Exit");
+            int choice = sc.nextInt();
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Salary: ");
+                    double salary = sc.nextDouble();
+                    employees.add(new Employee(id, name, salary));
+                    break;
+                case 2:
+                    System.out.print("Enter Employee ID to Update: ");
+                    int updateId = sc.nextInt();
+                    for (Employee emp : employees) {
+                        if (emp.id == updateId) {
+                            sc.nextLine();
+                            System.out.print("Enter New Name: ");
+                            emp.name = sc.nextLine();
+                            System.out.print("Enter New Salary: ");
+                            emp.salary = sc.nextDouble();
+                            break;
+                        }
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter Employee ID to Remove: ");
+                    int removeId = sc.nextInt();
+                    employees.removeIf(emp -> emp.id == removeId);
+                    break;
+                case 4:
+                    System.out.print("Enter Employee ID to Search: ");
+                    int searchId = sc.nextInt();
+                    for (Employee emp : employees) {
+                        if (emp.id == searchId) {
+                            System.out.println(emp);
+                            break;
+                        }
+                    }
+                    break;
+                case 5:
+                    for (Employee emp : employees) {
+                        System.out.println(emp);
+                    }
+                    break;
+                case 6:
+                    sc.close();
+                    return;
+            }
+        }
+    }
+}
